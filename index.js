@@ -10,7 +10,7 @@ const client = new Discord.Client();
 
 config = require('config-yml');
 client.config = config
-
+const { name, logid, indigologid } = require('./config.json');
 const giveaways = require(__dirname + '/custom_modules/giveaways.js')
 
 const SQLite = require("better-sqlite3");
@@ -64,7 +64,29 @@ client.on("ready", () => {
     sql.pragma("journal_mode = wal");}
 
 });
- 
+client.on('message', message => {
+    //indigo keywords
+    let indigolist = ["Indigo", "SJM", "Shawn", "MGRF", "TheMGRF", "Westosia", "Joe", "SirJoeDoe", "IndigoGames", "Indigo Games", "Charlie", "Jamie", "Jamie Cee", "JamieCee", "SJM1981", "SJM 1981", "Birm", "TheBirm", "TheBirmanator", "The Birmanator", "Zin", "Zinnia", "Duggan", "Dewgon"];
+
+    let foundInText = false;
+    for (var i in indigolist){
+        if (message.content.toLowerCase().includes(indigolist[i].toLowerCase())) foundInText = true;
+    }
+    if (foundInText) {
+        if (message.channel.type === "dm") return;
+        const embed2 = new Discord.RichEmbed()
+        .setTitle(message.guild.name + " - #" + message.channel.name)
+        .setDescription(message.content)
+        .setColor("#752861")
+        .setThumbnail(message.author.avatarURL)
+        .setTimestamp(message.createdAt)
+        .setAuthor(message.author.tag, message.member.avatarURL);
+        if (message.author.tag === name) {
+        } else {
+            client.channels.get(indigologid).send(embed2);
+        }
+    }
+}); 
 fs.readdir("./events/", (err, files) => {
   if (err) return console.error(err);
   files.forEach(file => {
